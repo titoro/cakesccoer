@@ -11,6 +11,9 @@
  *  試合経過、結果
  *  */
 
+App::uses('Folder','Utility');
+App::uses('File', 'Utility');
+
 class LivesController extends AppController{
     
     public $uses = array('POST','Live');    //使用するモデルを宣言
@@ -34,8 +37,33 @@ class LivesController extends AppController{
         //debug($tmhOauth);
         
        /*Twitterの検索結果を取得*/
-       $this->searchTwtter($tmhOAuth, 'セレッソ大阪', 8);
-        
+       $s_result =$this->searchTwtter($tmhOAuth, 'セレッソ大阪', 8);
+       //debug($s_result);
+       $s_result = $s_result->statuses;
+       //debug($s_result);
+       $search_result = array();
+       //検索結果から情報の取り出し
+       foreach($s_result as $var){
+           $search_result['text'][] = $var->text;
+           $search_result['name'][] = $var->user->name;
+       }
+       //debug($search_result['text']);
+       //debug($search_result['name']);
+       
+       /*Twitter ハッシュタグ検索 */
+       //ファイルの読み込み
+       
+       /*ファイルディレクトリ探査サンプル*/
+       //$dir = new Folder(APP,'path/');
+       //debug($dir->read());
+       
+       
+       //ハッシュタグのファイルを読み込み
+       $file = new File('C:\xampp\htdocs\cake\app\Text/team_hashtag.txt');
+       debug($file->info());
+       debug($file->read());
+       $file->close();
+       
        /* Twitterのホームラインを取得*/
        $timeline = $this->Session->read('hometime_line');
        //debug($timeline);
@@ -80,8 +108,8 @@ class LivesController extends AppController{
               $response = $tmhOAuth->response;
               //debug($response['response']);
               $data_j = json_decode($response['response']);
-              debug($data_j);
-
+              //debug($data_j);
+              return $data_j;
         }
         else{
             echo "リクエストの値が取得できませんでした";
@@ -129,7 +157,7 @@ class LivesController extends AppController{
  		  	$response = $tmhOAuth->response;
                         //debug($response['response']);
  		  	$this->twitter_timelne = json_decode($response['response']);
- 		  	debug($data_j);
+ 		  	//debug($data_j);
                         
  		  }
  		  else{
