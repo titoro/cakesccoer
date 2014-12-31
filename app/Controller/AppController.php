@@ -40,6 +40,10 @@ App::uses('Vendor', 'twitteroauth/twitteroauth');
 class AppController extends Controller {
 	//public $components = array();
         public $components = array('DebugKit.Toolbar','RequestHandler');
+        
+        /*Twitterの情報を格納する為の変数*/
+        public $twitter_timeline;
+        
  
         /*
         public function beforeFilter() {

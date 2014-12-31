@@ -45,8 +45,8 @@
 
 
 Router::connect(
-   '/opauth-complete/*', 
-   array('controller' => 'user', 'action' => 'opauthComplete')
+   '/opauth-complete/*',    //URL
+   array('controller' => 'users', 'action' => 'opauthComplete')
 );
 
 Router::parseExtensions("json");

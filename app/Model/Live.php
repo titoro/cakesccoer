@@ -1,8 +1,9 @@
 <?php
 //App::uses('SimplePasswordHasher', 'Controller/Component/Auth', 'AppModel', 'Model');
 App::uses('AppModel', 'Model');
-class User extends AppModel{
+class Live extends AppModel{
 
+        /*
 	public function beforeSave($options = array()){
 		if(!$this->id){
 			$passwordHasher = new SimplePasswordHasher();
@@ -10,6 +11,8 @@ class User extends AppModel{
 		}
 		return true;
 	}
+         * 
+         */
         //Twitterのホームタイムライン取得
         function tweetHomeTimeLine($data) {
             debug($data);
