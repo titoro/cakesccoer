@@ -59,11 +59,32 @@ class LivesController extends AppController{
        
        
        //ハッシュタグのファイルを読み込み
-       $file = new File('C:\xampp\htdocs\cake\app\Text/team_hashtag.txt');
-       debug($file->info());
-       debug($file->read());
-       $file->close();
+       /* File クラス使用の場合 */
+       ////$file = new File(APP.'\Text/team_hashtag.txt');
+       //$file_info = $file->read();
+       //debug($file_info);
+       //$file->close();
        
+       /* fopen使用 */
+       $handle = fopen(APP.'/Text/team_hashtag.txt','r');
+       $hashtag_data = array();
+       
+       $count = count(file(APP.'/Text/team_hashtag.txt'));
+       //debug($count);
+       
+       for($i = 0; $i < $count; $i++){
+           $hashtag_data[] = fgets($handle);
+       }
+       fclose($handle);
+       debug($hashtag_data);
+       /*
+       while(fgets($handle)){
+           $hashtag[] = fgets($handle);
+       }
+       debug($hashtag);
+       //$hash_info = fgets($handle);
+       fclose($handle);
+       */
        /* Twitterのホームラインを取得*/
        $timeline = $this->Session->read('hometime_line');
        //debug($timeline);
