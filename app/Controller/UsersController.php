@@ -84,6 +84,9 @@ class UsersController extends AppController{
  		  * コンストラクタの引数はトークンをまとめた連想配列
  		  */
                   
+                  //SessionへTwitterトークン情報を登録
+                  $this->Session->write('twitter_token',$this->data);
+            
  		  $tmhOAuth = new tmhOAuth(
  		  			array(
  		  				"consumer_key" => "pkOywXf82gAyn1hnpqgzShmHX",
