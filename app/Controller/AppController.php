@@ -20,7 +20,7 @@
  */
 
 //App::uses('Controller', 'Controller');
-//App::uses('Controller', 'Controller');
+App::uses('Controller', 'Controller');
 App::uses('Controller', 'Controller');
 App::build(array('Vendor' => array(APP . 'Vendor' . DS . 'tmhoauth')));
 App::uses('tmhOAuth', 'Vendor/tmhoauth/');
@@ -39,7 +39,7 @@ App::uses('Vendor', 'twitteroauth/twitteroauth');
 /* $ tail -15 Controller/AppController.php */
 class AppController extends Controller {
 	//public $components = array();
-        public $components = array('DebugKit.Toolbar','RequestHandler');
+        public $components = array('DebugKit.Toolbar','RequestHandler','Session');
         
         /*Twitterの情報を格納する為の変数*/
         public $twitter_timeline;

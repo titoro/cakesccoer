@@ -5,8 +5,8 @@
         //APP::import('Vender', 'tmhoauth');
         //APP::uses('tmhOAuth', 'Vender');
 
-	class UsersController extends AppController{
-            public $uses = array('User');   //Userモデルを指定
+class UsersController extends AppController{
+            public $uses = array('User','Live');   //Userモデルを指定
             
 		/*
 		public function beforeFilter() {
@@ -56,24 +56,33 @@
 
     }
                 
-                
-		public function opauthComplete() {
+        /*Twitter認証後リダイレクトされてくる*/
+	public function opauthComplete() {
  		  //debug($this->data);
  		  
  		  //$tmhUtil = new tmhUtilities();
 		  //$here = $tmhUtil->php_self();
  		  
- 		  /**
+                  //debug($this->data);
+                  //$data_twitter_token = $this->data;
+                  //$this->Live->setTweeetToken($data_twitter_token);
+                  //$t = $this->Live->getTweet();
+                  
+                  //$debug($t);
+                  
+                  //$tweitter_data_info = $this->data['auth']['info'];
+                  
+                  //$this->Live->setTest($tweitter_data_info);
+                  //$t_test = $this->Live->getTest();
+                  //debug($t_test);
+                  ////$data_j[] = $this->User->twitter_timeline($data);
+                  //$this->redirect(array('controller' => 'lives', 'action' => 'index'));
+                  //debug($data_j);
+                  
+                  /**
  		  * tmhOAuthを初期化
  		  * コンストラクタの引数はトークンをまとめた連想配列
  		  */
-                  //debug($this->data);
-                  //$data = $this->data;
-                  
-                  //$data_j[] = $this->User->twitter_timeline($data);
-                  
-                  //debug($data_j);
-                  
                   
  		  $tmhOAuth = new tmhOAuth(
  		  			array(
@@ -94,14 +103,7 @@
                            $tmhOAuth->url("1.1/statuses/home_timeline.json"), // エンドポイントを指定
                            array( "count" => 8 ) // パラメータ
                  );
- 		  		//'method'=> 'GET',
- 		  		//'url' => $twitter->url('1.1/statuses/user_timeline.json'),	//エンドポイントを指定
- 		  		//'params' => array("count" => 8)	//パラメータ
- 		  //));
- 		  
-                   //debug($status);
-                  
-                   //debug($tmhOAuth->response);
+
  		  /**
  		  * requestの返り値はHTTPのステータスコード
  		  *
@@ -112,21 +114,22 @@
  		  	* データはメンバのresponseの中に、
  		  	* さらに生のデータはその中の"response"の中にJSON形式で格納されている
  		  	*/
-                  
+                        
  		  	$response = $tmhOAuth->response;
                         //debug($response['response']);
  		  	$data_j = $this->twitter_timelne = json_decode($response['response']);
- 		  	debug($data_j);
-                        
-                        //リダイレクト（テストページ)
-                        //$this->redirect(array('controller' => 'lives', 'action' => 'index'));
+ 		  	//debug($data_j['user']);
+                        $this->Session->write('hometime_line', $data_j);
+                        //リダイレクト
+                       $this->redirect(array('controller' => 'lives', 'action' => 'index'));
  		  }
  		  else{
                       echo "リクエストの値が取得できませんでした";
                   }
-		}
+                  
 	}
-        
+}
+       
 /*   
 App::uses('AppController', 'Controller');
 class UsersController extends AppController{

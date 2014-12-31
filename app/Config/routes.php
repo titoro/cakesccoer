@@ -45,8 +45,9 @@
 
 
 Router::connect(
+   //opath 情報解析後のリダイレクト
    '/opauth-complete/*',    //URL
-   array('controller' => 'users', 'action' => 'opauthComplete')
+   array('controller' => 'lives', 'action' => 'opauthComplete')
 );
 
 Router::parseExtensions("json");

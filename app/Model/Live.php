@@ -1,9 +1,42 @@
 <?php
 //App::uses('SimplePasswordHasher', 'Controller/Component/Auth', 'AppModel', 'Model');
 App::uses('AppModel', 'Model');
+
 class Live extends AppModel{
 
-        /*
+    protected $twetter_token = array();
+    public $t_test;
+
+
+    public function setTest($test){
+        $this->t_test = $test;
+        
+    }
+    public function getTest(){
+        return $this->t_test;
+    }
+    
+    public function setTweeetToken($data){
+        $twetter_token = $data;
+        //debug($data);
+        //debug($this->twitter_token);
+        //debug($this->getTweetToken());
+    }
+    
+    public function getTweet(){
+        return $twetter_token;
+    }
+    
+    public function getTweetToken(){
+        //トークン情報が設定されている場合、トークン情報を返す
+        if(empty($this->twetter_token)){
+            return $this->twetter_token;
+        }
+        else{//トークン情報が設定されていない場合
+            return FALSE;
+        }
+    }
+    /*
 	public function beforeSave($options = array()){
 		if(!$this->id){
 			$passwordHasher = new SimplePasswordHasher();

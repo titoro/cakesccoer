@@ -13,17 +13,30 @@
 
 class LivesController extends AppController{
     
-    public $uses = array('POST','User','Live');    //使用するモデルを宣言
+    public $uses = array('POST','Live');    //使用するモデルを宣言
     //var $name = "Api";
+    
+    public $timeline = array();
+    
     public function index(){
         //ここで情報を処理
         //処理記述したら共通化してコンポーネントにする
         
-        /*Userコントローラーから情報を受け取る*/
+        /** Userコントローラーから情報を受け取る **/
+       //Twitterのホームラインを取得
+       $timeline = $this->Session->read('hometime_line');
+       //debug($timeline);
        
-        
+       foreach ($timeline as $val){
+           $timeline['text'][] = $val->text;
+           $timeline['name'][] = $val->user->name;
+
+       }
+       debug($timeline['text']);
+       debug($timeline['name']);
     }
-    
+
+
     public function search(){
 
                     //$this->autoLayout = false;
