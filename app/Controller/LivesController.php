@@ -103,8 +103,45 @@ class LivesController extends AppController{
            $hashtag_result['text'][] = $var->text;
            $hashtag_result['name'][] = $var->user->name;
        }
-       debug($hashtag_result);
+       //debug($hashtag_result);
        
+       /*画像付のツイートを検索、取得*/
+       $count = 100;
+       
+       /*メタ情報を含むすべてのツイートを取得*/
+       $search_meta_result = array();
+       $m_result = $this->searchWithEntities($tmhOAuth, $hashtag[$team_name], $count);
+       //$m_result = $m_result->statuses;
+       
+       //$m_result_array = $this->stdclass_to_array($m_result);
+       //$m_result_array = $this->obj2arr($m_result);
+       //debug($m_result);
+       $m_result = $m_result['statuses'];
+       
+       foreach ($m_result as $var){
+           $search_meta_result['text'][] = $var['text'];
+           $search_meta_result['name'][] = $var['user']['name'];
+           $search_meta_result['entities'][] = $var['entities'];
+           
+       }
+       //debug($search_meta_result);
+       
+       //debug($search_meta_result);
+       /*レスポンスからメタ情報から画像付きのものだけ取得 */
+       $search_photo_result = array();   //ハッシュタグ結果保持
+       $p_result = $this->searchWithEntities($tmhOAuth, $hashtag[$team_name], $count);
+       $p_result = $p_result['statuses'];
+       
+       foreach ($p_result as $var){
+            if(array_key_exists('media', $var['entities'])){
+              $search_photo_result['text'][] = $var['text'];
+              $search_photo_result['name'][] = $var['user']['name'];
+              $search_photo_result['entities'][] = $var['entities'];
+              $search_photo_result['media'][] = $var['entities']['media'];
+            }
+       }
+       debug($search_photo_result);
+        //  
        
        /* Twitterのホームラインを取得*/
        $timeline = $this->Session->read('hometime_line');
@@ -114,11 +151,81 @@ class LivesController extends AppController{
        foreach ($timeline as $val){
            $timeline['text'][] = $val->text;
            $timeline['name'][] = $val->user->name;
-
        }
        //debug($timeline['text']);
        //debug($timeline['name']);
     }
+    
+    /*stdClassオブジェクト→配列変換*/
+    //参考サイト
+    //http://suin.asia/2009/03/09/cast-object-to-array.html
+    function obj2arr($obj){
+        if(!is_object($obj)){
+            //debug($obj);
+            return $obj;
+        }
+        $arr = (array)$obj;
+        foreach ($arr as &$a){
+            $a = $this->obj2arr($a);
+        }
+        //debug($arr);
+        return $arr;
+    }
+    
+    //参考サイト
+    //http://coneta.jp/1857.html
+    function stdclass_to_array($objDATA) {
+ 
+	$arrayDATA = (array) $objDATA;
+	$arrayKeys = array_keys($arrayDATA);
+	$intCount = count($arrayKeys);
+ 
+	for($i = 0; $i < $intCount; $i++){
+            $arrayDATA = (array)$arrayDATA;
+        }
+        return $arrayDATA;
+    }
+    
+    //画像付のツイート検索用メソッド
+    public function searchWithEntities($tmhOAuth, $hashtag,$count){
+       $hashtag_1; //検索に使用するハッシュタグ
+        
+        if(count($hashtag) > 1){
+            //指定したハッシュタグが複数ある場合
+            //1つ目のハッシュタグを指定
+            $hashtag_temp = $hashtag[0];
+        }else if(count($hashtag) === 0 ){
+            //ハッシュタグを取得できなかった場合
+            return false;
+        }else{
+            //ハッシュタグを取得できた場合
+            $hashtag_1 = $hashtag[0];
+        }
+         $status = $tmhOAuth->request(
+                "GET", // リクエストメソッド
+                 $tmhOAuth->url("1.1/search/tweets.json"), // エンドポイントを指定
+                 array('q' => urlencode($hashtag_1),
+                     'count' => $count,
+                     'include_entities' => '1'));
+
+        /**
+        * requestの返り値はHTTPのステータスコード
+        */
+
+        if($status == 200){
+              /**
+              * データはメンバのresponseの中に、
+              * さらに生のデータはその中の"response"の中にJSON形式で格納されている
+              */
+
+              $response = $tmhOAuth->response;
+              //debug($response['response']);
+              $data_j = json_decode($response['response'],true);
+              //debug($data_j);
+              return $data_j;
+        }
+    }
+    
     
     /*Twitter 検索結果取得用メソッド
      * $tmhOAuth tmhOAuthインスタンス
