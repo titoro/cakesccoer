@@ -21,11 +21,15 @@
 
 //App::uses('Controller', 'Controller');
 App::uses('Controller', 'Controller');
-App::uses('Controller', 'Controller');
+//App::uses('Controller', 'Controller');
 App::build(array('Vendor' => array(APP . 'Vendor' . DS . 'tmhoauth')));
 App::uses('tmhOAuth', 'Vendor/tmhoauth/');
 App::build(array('Vendor' => array(APP . 'Vendor' . DS . 'twitteroauth')));
 App::uses('Vendor', 'twitteroauth/twitteroauth');
+App::build(array('Vendor' => array(APP . 'Vendor' . DS . 'goutte')));
+App::uses('goutte', 'Vender/goutte');
+
+//App::import('Vender', '/Vender/goutte/goutte.phar');
 /**
  * Application Controller
  *

@@ -21,9 +21,20 @@ class LivesController extends AppController{
     
     public $timeline = array();
     
+    //use Goutte\Client;
+    
     public function index(){
         //ここで情報を処理
         //処理記述したら共通化してコンポーネントにする
+        
+        /*Goutteライブラリ使用*/
+        //$toto_vote =array();       //スケジュール、投票率
+
+        //今回のtotoマッチングと投票率の取得
+        define('TOTO_VOTE', 'http://www.totoone.jp/blog/datawatch/');
+
+        //Goutteオブジェクト生成
+        //$client_vote = new Client();
         
         /** Userコントローラーから情報を受け取る 
          * 
@@ -105,6 +116,12 @@ class LivesController extends AppController{
        }
        //debug($hashtag_result);
        
+       /*特定ユーザーのタイムラインを取得*/
+       $user_timeline_result = array();
+       $screenname = "SoccerKingJP";
+       $u_result = $this->searchUserTimeline($tmhOAuth, $screenname, 8);
+       debug($u_result);
+       
        /*画像付のツイートを検索、取得*/
        $count = 100;
        
@@ -140,7 +157,7 @@ class LivesController extends AppController{
               $search_photo_result['media'][] = $var['entities']['media'];
             }
        }
-       debug($search_photo_result);
+       //debug($search_photo_result);
         //  
        
        /* Twitterのホームラインを取得*/
@@ -185,6 +202,38 @@ class LivesController extends AppController{
         }
         return $arrayDATA;
     }
+    
+    //特定ユーザーのタイムラインを取得
+    public function searchUserTimeline($tmhOAuth, $screenname,$count){
+       
+         $status = $tmhOAuth->request(
+                "GET", // リクエストメソッド
+                 $tmhOAuth->url("1.1/statuses/user_timeline.json"), // エンドポイントを指定
+                 array('screen_name' => urldecode($screenname),
+                     'count' => $count,
+                      ));
+
+        /**
+        * requestの返り値はHTTPのステータスコード
+        */
+
+        if($status == 200){
+              /**
+              * データはメンバのresponseの中に、
+              * さらに生のデータはその中の"response"の中にJSON形式で格納されている
+              */
+
+              $response = $tmhOAuth->response;
+              //debug($response['response']);
+              $data_j = json_decode($response['response'],true);
+              debug($data_j);
+              return $data_j;
+        }
+        else{
+            echo 'リクエストを取得できませんでした';
+        }
+    }
+    
     
     //画像付のツイート検索用メソッド
     public function searchWithEntities($tmhOAuth, $hashtag,$count){
