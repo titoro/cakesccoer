@@ -18,7 +18,11 @@ class LivesController extends AppController{
     
     public $uses = array('POST','Live');    //使用するモデルを宣言
     //var $name = "Api";
-    
+    public $components = array('Twitter');
+
+
+
+
     public $timeline = array();
     
     //use Goutte\Client;
@@ -119,15 +123,15 @@ class LivesController extends AppController{
        /*特定ユーザーのタイムラインを取得*/
        $user_timeline_result = array();
        $screenname = "SoccerKingJP";
-       $u_result = $this->searchUserTimeline($tmhOAuth, $screenname, 8);
-       debug($u_result);
+       $u_result = $this->Twitter->searchUserTimeline($tmhOAuth, $screenname, 8);
+       //debug($u_result);
        
        /*画像付のツイートを検索、取得*/
        $count = 100;
        
        /*メタ情報を含むすべてのツイートを取得*/
        $search_meta_result = array();
-       $m_result = $this->searchWithEntities($tmhOAuth, $hashtag[$team_name], $count);
+       $m_result = $this->Twitter->searchWithEntities($tmhOAuth, $hashtag[$team_name], $count);
        //$m_result = $m_result->statuses;
        
        //$m_result_array = $this->stdclass_to_array($m_result);
@@ -146,7 +150,7 @@ class LivesController extends AppController{
        //debug($search_meta_result);
        /*レスポンスからメタ情報から画像付きのものだけ取得 */
        $search_photo_result = array();   //ハッシュタグ結果保持
-       $p_result = $this->searchWithEntities($tmhOAuth, $hashtag[$team_name], $count);
+       $p_result = $this->Twitter->searchWithEntities($tmhOAuth, $hashtag[$team_name], $count);
        $p_result = $p_result['statuses'];
        
        foreach ($p_result as $var){
@@ -201,78 +205,6 @@ class LivesController extends AppController{
             $arrayDATA = (array)$arrayDATA;
         }
         return $arrayDATA;
-    }
-    
-    //特定ユーザーのタイムラインを取得
-    public function searchUserTimeline($tmhOAuth, $screenname,$count){
-       
-         $status = $tmhOAuth->request(
-                "GET", // リクエストメソッド
-                 $tmhOAuth->url("1.1/statuses/user_timeline.json"), // エンドポイントを指定
-                 array('screen_name' => urldecode($screenname),
-                     'count' => $count,
-                      ));
-
-        /**
-        * requestの返り値はHTTPのステータスコード
-        */
-
-        if($status == 200){
-              /**
-              * データはメンバのresponseの中に、
-              * さらに生のデータはその中の"response"の中にJSON形式で格納されている
-              */
-
-              $response = $tmhOAuth->response;
-              //debug($response['response']);
-              $data_j = json_decode($response['response'],true);
-              debug($data_j);
-              return $data_j;
-        }
-        else{
-            echo 'リクエストを取得できませんでした';
-        }
-    }
-    
-    
-    //画像付のツイート検索用メソッド
-    public function searchWithEntities($tmhOAuth, $hashtag,$count){
-       $hashtag_1; //検索に使用するハッシュタグ
-        
-        if(count($hashtag) > 1){
-            //指定したハッシュタグが複数ある場合
-            //1つ目のハッシュタグを指定
-            $hashtag_temp = $hashtag[0];
-        }else if(count($hashtag) === 0 ){
-            //ハッシュタグを取得できなかった場合
-            return false;
-        }else{
-            //ハッシュタグを取得できた場合
-            $hashtag_1 = $hashtag[0];
-        }
-         $status = $tmhOAuth->request(
-                "GET", // リクエストメソッド
-                 $tmhOAuth->url("1.1/search/tweets.json"), // エンドポイントを指定
-                 array('q' => urlencode($hashtag_1),
-                     'count' => $count,
-                     'include_entities' => '1'));
-
-        /**
-        * requestの返り値はHTTPのステータスコード
-        */
-
-        if($status == 200){
-              /**
-              * データはメンバのresponseの中に、
-              * さらに生のデータはその中の"response"の中にJSON形式で格納されている
-              */
-
-              $response = $tmhOAuth->response;
-              //debug($response['response']);
-              $data_j = json_decode($response['response'],true);
-              //debug($data_j);
-              return $data_j;
-        }
     }
     
     
