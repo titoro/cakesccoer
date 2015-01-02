@@ -120,7 +120,7 @@ class UsersController extends AppController{
                         
  		  	$response = $tmhOAuth->response;
                         //debug($response['response']);
- 		  	$data_j = $this->twitter_timelne = json_decode($response['response']);
+ 		  	$data_j = $this->twitter_timelne = json_decode($response['response'],TRUE);
  		  	//debug($data_j['user']);
                         $this->Session->write('hometime_line', $data_j);
                         //リダイレクト
