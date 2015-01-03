@@ -125,6 +125,8 @@ Configure::write('Opauth.Strategy.Twitter', array(
 
 Configure::write('Opauth.path', '/cake/auth/');
 
+CakePlugin::load('Composer', array('bootstrap' => true));
+
 /**
     Twitter
 */
