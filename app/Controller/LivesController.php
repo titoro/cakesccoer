@@ -14,14 +14,16 @@
 App::uses('Folder','Utility');
 App::uses('File', 'Utility');
 
+//Goutteの読み込み
+//require_once '../Vendor/goutte/goutte.phar';
+use Goutte\Client;
+
 class LivesController extends AppController{
     
     public $uses = array('POST','Live');    //使用するモデルを宣言
     //var $name = "Api";
-    public $components = array('Twitter');
-
-
-
+    /*コンポーネントの指定*/
+    public $components = array('Twitter','Toto');
 
     public $timeline = array();
     
@@ -31,11 +33,12 @@ class LivesController extends AppController{
         //ここで情報を処理
         //処理記述したら共通化してコンポーネントにする
         
-        /*Goutteライブラリ使用*/
-        //$toto_vote =array();       //スケジュール、投票率
+        /*Toto投票率の取得*/
+       
 
         //今回のtotoマッチングと投票率の取得
-        define('TOTO_VOTE', 'http://www.totoone.jp/blog/datawatch/');
+        $toto_vote = $this->Toto->getTotoVote();
+        debug($toto_vote);
 
         //Goutteオブジェクト生成
         //$client_vote = new Client();
@@ -144,13 +147,16 @@ class LivesController extends AppController{
        $timeline = $this->Session->read('hometime_line');
        //debug($timeline);
       
-       //ホームラインの取得結果から情報取り出し
-       foreach ($timeline as $val){
-           $timeline['text'][] = $val['text'];
-           $timeline['name'][] = $val['user']['name'];
+       
+       if($timeline){
+            //ホームラインの取得結果から情報取り出し
+            foreach ($timeline as $val){
+                $timeline['text'][] = $val['text'];
+                $timeline['name'][] = $val['user']['name'];
+            }
+            //debug($timeline['text']);
+            //debug($timeline['name']);
        }
-       //debug($timeline['text']);
-       //debug($timeline['name']);
     }
     
     /*stdClassオブジェクト→配列変換*/
